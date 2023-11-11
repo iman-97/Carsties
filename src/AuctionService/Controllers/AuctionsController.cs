@@ -55,15 +55,15 @@ public class AuctionsController : ControllerBase
     public async Task<ActionResult<AuctionDto>> CreateAuction(CreateAuctionDto auctionDto)
     {
         var auction = _mapper.Map<Auction>(auctionDto);
-
         auction.Seller = "test";
 
         await _context.Auctions.AddAsync(auction);
-        var result = await _context.SaveChangesAsync() > 0;//zero means nothing saved into database
 
         var newAuction = _mapper.Map<AuctionDto>(auction);
 
         await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
+
+        var result = await _context.SaveChangesAsync() > 0;//zero means nothing saved into database
 
         if (result == false)
             return BadRequest("Could not save changes to the DB");
