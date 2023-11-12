@@ -61,6 +61,7 @@ public class AuctionsController : ControllerBase
 
         var newAuction = _mapper.Map<AuctionDto>(auction);
 
+        //publish comes before save changes becuase if our bus is not availabe our message saves into outbox
         await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
 
         var result = await _context.SaveChangesAsync() > 0;//zero means nothing saved into database
@@ -88,6 +89,8 @@ public class AuctionsController : ControllerBase
         auction.Item.Mileage = updateAuctionDto.Mileage ?? auction.Item.Mileage;
         auction.Item.Year = updateAuctionDto.Year ?? auction.Item.Year;
 
+        await _publishEndpoint.Publish(_mapper.Map<AuctionUpdated>(auction));
+
         var result = await _context.SaveChangesAsync() > 0;
 
         if (result == true)
@@ -105,6 +108,8 @@ public class AuctionsController : ControllerBase
             return NotFound();
 
         _context.Auctions.Remove(auction);
+
+        await _publishEndpoint.Publish(_mapper.Map<AuctionDeleted>(new { Id = auction.Id.ToString() }));
 
         var result = await _context.SaveChangesAsync() > 0;
 
