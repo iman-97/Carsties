@@ -1,7 +1,9 @@
+import Listing from "./auctions/Listing";
+
 export default function Home() {
   return (
     <div>
-      Content Goes here!
+      <Listing />
     </div>
   )
 }
