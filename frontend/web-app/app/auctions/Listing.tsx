@@ -39,7 +39,7 @@ function setPageNumber(pageNumber: number){
     <>
       <Filters />
 
-      if(data.totalCount === 0 ? (
+      {data.totalCount === 0 ? (
         <EmptyFilter showReset />
       ) : (
         <>
@@ -53,7 +53,7 @@ function setPageNumber(pageNumber: number){
               pageCount={data.pageCount} pageChanged={setPageNumber} />
           </div>
         </>
-      ))
+      )}
     </>
   )
 }
